@@ -1,0 +1,55 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8056:8080"
+    environment:
+      # Local development only. Production needs its own configuration:
+      # a non-Development environment and Authentication__RequireHttpsMetadata=true.
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      # Hostname inside this value must stay "postgres" so the API uses the Compose network.
+      Database__ConnectionString: ${DATABASE_CONNECTION_STRING:?Set DATABASE_CONNECTION_STRING}
+      Database__EnableSensitiveDataLogging: "false"
+      Authentication__RequireHttpsMetadata: "false"
+      Authentication__Google__ClientId: ${GOOGLE_CLIENT_ID:-}
+      Authentication__Apple__ClientId: ${APPLE_CLIENT_ID:-}
+      Jwt__SecretKey: ${JWT_SECRET_KEY:?Set JWT_SECRET_KEY}
+      ManagementSeed__Enabled: "false"
+      Storage__RootPath: /app/uploads
+      FileStorage__LocalPath: /app/uploads
+      FileStorage__PublicBaseUrl: http://localhost:8056/uploads
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    # Published for local development so host tools (dotnet run, EF Core CLI, psql)
+    # can reach PostgreSQL on localhost:5432. The API container does not use this
+    # mapping; it connects to hostname "postgres" on the Compose network.
+    # Do not publish this port outside local development.
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: hotel_resort_booking
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init-databases.sql:/docker-entrypoint-initdb.d/01-init-databases.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hotel_resort_booking"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  uploads_data:

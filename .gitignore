@@ -1,0 +1,61 @@
+# Build
+[Bb]in/
+[Oo]bj/
+**/bin/
+**/obj/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+build.log
+infra.log
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+*.user
+*.DotSettings.user
+*.userosscache
+*.suo
+*.sln.docstates
+*.rsuser
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Test / coverage
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+coverage*.json
+coverage*.xml
+*.coverage
+*.coveragexml
+*.opencover.xml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / local config
+*.pfx
+appsettings.*.local.json
+.env
+.env.*
+!.env.example
+
+# Publish
+publish/
+*.Publish.xml
+*.azurePubxml
+*.pubxml
+*.pubxml.user

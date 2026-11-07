@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+**/packages/
+**/.idea/
+**/.vs/
+**/*.user
+**/.DS_Store
+.git/
+tests/
+*.log
